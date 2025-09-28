@@ -18,8 +18,9 @@ const registerUser = asyncHandler(async (req, res, next) => {
     // return response
 
 
-    const { fullname, email, password } = req.body;
-    console.log("email: ", email);
+    const { fullname, email, password, username } = req.body;
+    // console.log("email: ", email);
+    // console.log(req.body);
 
     if (!fullname || !email || !password) {
         throw new ApiError(400, "All fields are required");
@@ -32,9 +33,11 @@ const registerUser = asyncHandler(async (req, res, next) => {
     if (existedUser) {
         throw new ApiError(409, "User already exists");
     }
-
     const avatarLocalPath = req.files?.avatar[0]?.path;
-    const coverImageLocalPath = req.files?.coverImage[0]?.path;
+    // const coverImageLocalPath = req.files?.coverImage[0]?.path;  if cover image is not provided then it will give error
+    let coverImageLocalPath = null;
+    if (req.files?.coverImage) {
+        coverImageLocalPath = req.files?.coverImage[0]?.path;}
 
     if (!avatarLocalPath) {
         throw new ApiError(400, "Avatar image is required");
@@ -53,7 +56,7 @@ const registerUser = asyncHandler(async (req, res, next) => {
         password,
         avatar: avatar.url,
         coverImage: coverImage?.url || "",
-        username: username.tolowerCase()
+        username: username.toLowerCase()
     });
 
     const createdUser = await User.findById(user._id).select("-password -refreshToken");

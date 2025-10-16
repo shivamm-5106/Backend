@@ -1,3 +1,7 @@
+import dotenv from "dotenv";
+dotenv.config();
+
+
 import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
@@ -24,6 +28,7 @@ import userRouter from "./routes/user.routes.js";
 //route declaration
 
 app.use("/api/v1/users",userRouter);
+
 
 
 

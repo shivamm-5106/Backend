@@ -1,3 +1,4 @@
+
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import User from "../models/user.model.js";
@@ -7,7 +8,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 
 const generateAccessAndRefreshToken =async (userId)=>{
     try {
-        const user =User.findById(userId);
+        const user =await User.findById(userId);
         const accessToken=user.generateAccessToken();
         const refreshToken=user.generateRefreshToken();
         user.refreshToken=refreshToken;
@@ -15,7 +16,7 @@ const generateAccessAndRefreshToken =async (userId)=>{
         return {accessToken,refreshToken};
         
     } catch (error) {
-        throw new ApiError(500,"something went wrong while generating tokens");
+        throw new ApiError(500,error?.message ||"something went wrong while generating tokens");
     }
     
 }
@@ -97,7 +98,7 @@ const loginUser = asyncHandler(async(req,res)=>{
 
     const {username,email,password} = req.body;
 
-    if (!username || !email){
+    if (!(username || email)){
         throw new ApiError(400,"Username or email is required");
     }
     if(!password){
@@ -153,6 +154,7 @@ const logoutUser = asyncHandler(async(req,res)=>{
 }
 
 )
+
 
 
 export { 
